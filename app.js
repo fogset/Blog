@@ -35,8 +35,8 @@ app.get("/compose", function(req, res) {
   res.render("compose");
 })
 app.post("/compose", function(req, res) {
-  let composeInput = req.body.composeInput;
-  console.log(composeInput);
+  const postInfo = {title:req.body.postTitle, body:req.body.postBody};
+  console.log(postInfo);
 })
 
 app.listen(3000, function(){
