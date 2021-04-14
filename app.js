@@ -13,10 +13,14 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://localhost:27017/blogDB", {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017/blogDB", {
+  useNewUrlParser: true
+});
 
 let posts = [];
 
@@ -27,15 +31,14 @@ const postSchema = {
 
 const storePost = mongoose.model("storePost", postSchema);
 
-
 app.get("/", function(req, res) {
-  res.render("home", {
-    startingContent: homeStartingContent,
-    posts: posts
-  });
+  storePost.find({}, function(err, foundPosts) {
+    res.render("home", {
+      startingContent: homeStartingContent,
+      posts: foundPosts
+    });
+  })
 })
-
-
 
 app.get("/about", function(req, res) {
   res.render("about", {
@@ -53,19 +56,22 @@ app.get("/compose", function(req, res) {
 
 app.get("/posts/:postName", function(req, res) {
   const requestedTitle = _.lowerCase(req.params.postName);
-  posts.forEach(function(post){
+  posts.forEach(function(post) {
     const storedTitle = _.lowerCase(post.title);
-      if(storedTitle == requestedTitle){
-        res.render("post", {
-          postContent: post.body,
-          postTitle: storedTitle,
-        });
-      }
-    })
+    if (storedTitle == requestedTitle) {
+      res.render("post", {
+        postContent: post.body,
+        postTitle: storedTitle,
+      });
+    }
+  })
 })
 
 app.post("/compose", function(req, res) {
-  const postInfo = {title:req.body.postTitle, body:req.body.postBody};
+  const postInfo = {
+    title: req.body.postTitle,
+    body: req.body.postBody
+  };
   posts.push(postInfo);
   const currentPost = new storePost({
     title: req.body.postTitle,
@@ -75,6 +81,6 @@ app.post("/compose", function(req, res) {
   res.redirect("/");
 })
 
-app.listen(3000, function(){
+app.listen(3000, function() {
   console.log("Server started on port 3000");
 });
