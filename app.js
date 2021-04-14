@@ -16,9 +16,17 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://localhose:27017/todolistDB", {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017/blogDB", {useNewUrlParser: true});
 
 let posts = [];
+
+const postSchema = {
+  title: String,
+  body: String
+};
+
+const storePost = mongoose.model("storePost", postSchema);
+
 
 app.get("/", function(req, res) {
   res.render("home", {
@@ -26,6 +34,9 @@ app.get("/", function(req, res) {
     posts: posts
   });
 })
+
+
+
 app.get("/about", function(req, res) {
   res.render("about", {
     aboutContent: aboutContent,
@@ -56,6 +67,11 @@ app.get("/posts/:postName", function(req, res) {
 app.post("/compose", function(req, res) {
   const postInfo = {title:req.body.postTitle, body:req.body.postBody};
   posts.push(postInfo);
+  const currentPost = new storePost({
+    title: req.body.postTitle,
+    body: req.body.postBody
+  });
+  currentPost.save();
   res.redirect("/");
 })
 
