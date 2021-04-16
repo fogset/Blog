@@ -60,10 +60,12 @@ app.get("/posts/:postName", function(req, res) {
     foundPosts.forEach(function(currentPost){
         const currentTitle = _.lowerCase(currentPost.title);
         if (currentTitle == requestedTitle) {
+
           res.render("post", {
             postContent: currentPost.body,
             postTitle: currentTitle,
           })
+
         }
     })
   })
@@ -85,7 +87,7 @@ app.post("/compose", function(req, res) {
     title: req.body.postTitle,
     body: req.body.postBody
   };
-  posts.push(postInfo);
+  //posts.push(postInfo);
   const currentPost = new storePost({
     title: req.body.postTitle,
     body: req.body.postBody
